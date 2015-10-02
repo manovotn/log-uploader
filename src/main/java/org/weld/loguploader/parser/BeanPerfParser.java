@@ -60,10 +60,11 @@ public abstract class BeanPerfParser extends GeneralParser {
         }
 
         //TODO find out what do we need this for
-        //atm will put build number as param
         for (String key : params.keySet()) {
             builder.parameter(key, params.get(key));
         }
+        //build number is extracted from build tag and added as separate param for readability
+        builder.parameter("Build number", getBuildNumber());
 
         // values, parsing is done via simple method
         setValues(builder);
