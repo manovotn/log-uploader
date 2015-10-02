@@ -20,6 +20,8 @@ import org.weld.loguploader.parser.BeanPerfParserInterceptors;
 import org.weld.loguploader.parser.BeanPerfParserProducers;
 import org.weld.loguploader.parser.BeanPerfParserSimpleInjection;
 import org.weld.loguploader.parser.GeneralParser;
+import org.weld.loguploader.parser.NumberguessPerfLoadParser;
+import org.weld.loguploader.parser.NumberguessPerfStressParser;
 
 /**
  *
@@ -95,6 +97,12 @@ public class UploaderMain {
                 break;
             case "jenkins-eap-7x-Weld-perf-bean-testing-simpleinjection":
                 parser = new BeanPerfParserSimpleInjection(pathToLogFile, tagList, params, comment);
+                break;
+            case "jenkins-eap-7x-Weld-perf-numberguess-stress":
+                parser = new NumberguessPerfStressParser(pathToLogFile, tagList, params, comment);
+                break;
+            case "jenkins-eap-7x-Weld-perf-numberguess-load":
+                parser = new NumberguessPerfLoadParser(pathToLogFile, tagList, params, comment);
                 break;
             default:
                 System.err.println("FAILURE: no suitable parser can be used.");

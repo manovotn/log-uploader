@@ -24,7 +24,7 @@
         <input.comment>Dummy default comment</input.comment>
         
         <!--Sample input:-->
-        <!--mvn exec:java -DpathToLog=/home/manovotn/Documents/logDecorator.txt -DurlAndPort=localhost:8080 -Dusername=perfrepouser -Dpassword=perfrepouser1. -Dinput.tags=weld,decorators,eap7,dummy -Dinput.Parameters="BUILD_TAG=jenkins-eap-7x-Weld-perf-bean-testing-decorators-7,weld=2.3.0.Final,dummyTest=whatever" -Dinput.comment="Maven executed build with args as pom parameters"-->
+        <!--mvn exec:java -DpathToLog=/home/manovotn/Documents/logDecorator.txt -DurlAndPort=localhost:8080 -Dusername=perfrepouser -Dpassword=perfrepouser1. -Dinput.tags=weld,decorators,eap7,dummy -Dinput.parameters="BUILD_TAG=jenkins-eap-7x-Weld-perf-bean-testing-decorators-7,weld=2.3.0.Final,dummyTest=whatever" -Dinput.comment="Maven executed build with args as pom parameters"-->
     </properties>
     
     <dependencies>

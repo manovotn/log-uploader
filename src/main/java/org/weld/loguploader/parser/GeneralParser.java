@@ -7,10 +7,14 @@ package org.weld.loguploader.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.perfrepo.model.TestExecution;
+import org.perfrepo.model.builder.TestExecutionBuilder;
 import org.weld.loguploader.filemanagement.FileManager;
 
 /**
@@ -42,7 +46,58 @@ public abstract class GeneralParser {
         return parseLogToTestExecution();
     }
 
-    protected abstract TestExecution parseLogToTestExecution() throws IOException;
+    protected TestExecution parseLogToTestExecution() throws IOException {
+        TestExecutionBuilder builder = TestExecution.builder();
+
+        // match with Test by UID
+        // each parser has a unique one to match the test case
+        builder.testUid(getUid());
+
+        // set a name, based on input par derived from jenkins
+        builder.name(getBuildName());
+
+        //build date
+        builder.started(new Date());
+
+        // tags need to be precise and derived from current job and EAP version
+        // passed in as an argument to build for now
+        // e.g. Weld, perf. bean-testing, events/decorators/interceptors,producers/simple-injection
+        for (String s : tagList) {
+            builder.tag(s);
+        }
+
+        // add params
+        for (String key : params.keySet()) {
+            builder.parameter(key, params.get(key));
+        }
+        // build number is extracted from build tag and added as separate param for readability
+        builder.parameter("Build number", getBuildNumber());
+
+        // values, each parser instance implements this separately
+        setValues(builder);
+
+        // comment about build, ignore when it is default, comments are not mandatory
+        // TODO could be used to determine re-run?
+        if (!comment.equalsIgnoreCase("Dummy default comment")) {
+            builder.comment(comment);
+        }
+
+        // finish by creating TestExecution
+        return builder.build();
+    }
+
+    protected abstract String getUid();
+
+    protected String getBuildName() {
+        return params.get("BUILD_TAG");
+    }
+
+    protected String getBuildNumber() {
+        Pattern pattern = Pattern.compile("[0-9]+$");
+        Matcher matcher = pattern.matcher(getBuildName());
+        matcher.find();
+        return matcher.group(0);
+    }
 
     public void verifyLog() {
         try {
@@ -59,6 +114,8 @@ public abstract class GeneralParser {
         manager = new FileManager(pathToLog);
         reader = manager.getReader();
     }
+
+    protected abstract void setValues(TestExecutionBuilder builder) throws IOException;
 
     protected void verifyLogIsNotEmpty() throws IOException {
         reader.mark(500);
