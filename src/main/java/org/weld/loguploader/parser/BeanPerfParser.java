@@ -8,6 +8,7 @@ package org.weld.loguploader.parser;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,14 +21,12 @@ import org.perfrepo.model.builder.TestExecutionBuilder;
  */
 public abstract class BeanPerfParser extends GeneralParser {
 
-    public BeanPerfParser(String pathToLog, List<String> tagList, String buildNameAndNumber) {
-        this.pathToLog = pathToLog;
-        this.tagList = tagList;
-        this.buildName = buildNameAndNumber;
+    public BeanPerfParser(String pathToLog, List<String> tagList, Map<String, String> params, String comment) {
+        super(pathToLog, tagList, params, comment);
     }
 
     protected String getBuildName() {
-        return buildName;
+        return params.get("BUILD_TAG");
     }
 
     protected String getBuildNumber() {
@@ -62,14 +61,18 @@ public abstract class BeanPerfParser extends GeneralParser {
 
         //TODO find out what do we need this for
         //atm will put build number as param
-        builder.parameter("jenkins build number", getBuildNumber());
+        for (String key : params.keySet()) {
+            builder.parameter(key, params.get(key));
+        }
 
-        // values, will be done via simple class
+        // values, parsing is done via simple method
         setValues(builder);
 
-        //comment about build
-        // could be used to determine re-run?
-        builder.comment("So far these are but a test runs on localhost!");
+        //comment about build, ignore when it is default, comments are not mandatory
+        //TODO could be used to determine re-run?
+        if (!comment.equalsIgnoreCase("Dummy default comment")) {
+            builder.comment(comment);
+        }
 
         //finish by creating TestExecution
         return builder.build();

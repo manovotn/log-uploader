@@ -8,6 +8,7 @@ package org.weld.loguploader.parser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.perfrepo.model.TestExecution;
 import org.weld.loguploader.filemanagement.FileManager;
@@ -19,12 +20,19 @@ import org.weld.loguploader.filemanagement.FileManager;
  */
 public abstract class GeneralParser {
 
-    protected String buildName;
-
     protected FileManager manager;
     protected String pathToLog;
     protected BufferedReader reader;
     protected List<String> tagList;
+    protected String comment;
+    protected Map<String, String> params;
+
+    public GeneralParser(String pathToLog, List<String> tagList, Map<String, String> params, String comment) {
+        this.pathToLog = pathToLog;
+        this.tagList = tagList;
+        this.params = params;
+        this.comment = comment;
+    }
 
     public void closeResource() {
         manager.closeResource();

@@ -6,6 +6,7 @@
 package org.weld.loguploader.parser;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -13,8 +14,8 @@ import java.util.List;
  */
 public class BeanPerfParserInterceptors extends BeanPerfParser {
 
-    public BeanPerfParserInterceptors(String pathToLog, List<String> tagList, String buildNameAndNumber) {
-        super(pathToLog, tagList, buildNameAndNumber);
+    public BeanPerfParserInterceptors(String pathToLog, List<String> tagList, Map<String, String> params, String comment) {
+        super(pathToLog, tagList, params, comment);
     }
 
     @Override
