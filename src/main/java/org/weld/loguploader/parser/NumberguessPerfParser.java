@@ -21,12 +21,14 @@ import org.perfrepo.model.builder.TestExecutionBuilder;
  */
 public abstract class NumberguessPerfParser extends GeneralParser {
 
+    // metrics
     private static final String ITERATION = "iteration";
     private static final String MAX_TIME = "max response time";
     private static final String MEAN_TIME = "mean response time";
     private static final String SAMPLES = "samples";
     private static final String SESSIONS = "sessions";
     private static final String THROUGHPUT = "throughput";
+    private static final String NODES = "nodes";
 
     private List<Map<String, Double>> storedValues;
 
@@ -52,6 +54,7 @@ public abstract class NumberguessPerfParser extends GeneralParser {
             builder.value(MAX_TIME, m.get(MAX_TIME), ITERATION, iterationNumber);
             builder.value(SAMPLES, m.get(SAMPLES), ITERATION, iterationNumber);
             builder.value(SESSIONS, m.get(SESSIONS), ITERATION, iterationNumber);
+            builder.value(NODES, m.get(NODES), ITERATION, iterationNumber);
         }
     }
 
@@ -66,12 +69,13 @@ public abstract class NumberguessPerfParser extends GeneralParser {
     protected void verifyLogMakesSense() throws IOException {
         storedValues = new ArrayList<>();
 
-        // patterns to match for wanted information
+        // patterns to match for wanted information (metrics)
         Pattern throughtput = Pattern.compile("throughput: [0-9]*[,]*[0-9]+\\.[0-9]+");
         Pattern meanTime = Pattern.compile("mean: [0-9]+");
         Pattern maxTime = Pattern.compile("max: [0-9]+");
         Pattern samples = Pattern.compile("samples: [0-9]+");
         Pattern sessions = Pattern.compile("Sessions: [0-9]+");
+        Pattern nodes = Pattern.compile("Nodes: [1-9]+");
 
         //patterns to match for possible errors, if these are found then there are no errors
         Pattern noUnhealthySamples = Pattern.compile("unhealthy samples: 0,");
@@ -93,12 +97,14 @@ public abstract class NumberguessPerfParser extends GeneralParser {
                 Matcher maxTimeMatcher = maxTime.matcher(oneLine);
                 Matcher samplesMatcher = samples.matcher(oneLine);
                 Matcher sessionsMatcher = sessions.matcher(oneLine);
+                Matcher nodesMatcher = nodes.matcher(oneLine);
 
                 throughtputMatcher.find();
                 meanTimeMatcher.find();
                 maxTimeMatcher.find();
                 samplesMatcher.find();
                 sessionsMatcher.find();
+                nodesMatcher.find();
 
                 // store desires data, these will be pushed in case the log is healthy
                 wantedData.put(THROUGHPUT, Double.valueOf(throughtputMatcher.group(0).substring(12).replace(",", "")));
@@ -106,6 +112,7 @@ public abstract class NumberguessPerfParser extends GeneralParser {
                 wantedData.put(MAX_TIME, Double.valueOf(maxTimeMatcher.group(0).substring(4)));
                 wantedData.put(SAMPLES, Double.valueOf(samplesMatcher.group(0).substring(8)));
                 wantedData.put(SESSIONS, Double.valueOf(sessionsMatcher.group(0).substring(9)));
+                wantedData.put(NODES, Double.valueOf(nodesMatcher.group(0).substring(6)));
 
                 storedValues.add(wantedData);
             } else {
