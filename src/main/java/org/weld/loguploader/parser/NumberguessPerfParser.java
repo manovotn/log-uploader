@@ -36,26 +36,29 @@ public abstract class NumberguessPerfParser extends GeneralParser {
 
     /**
      *
-     * Values for numberguess testing are multi value based. Each line of the log file has to be parsed and inserted as one one.
-     * Following values are sought after: throughput, mean time, max time, samples, sessions and iteration number (derived).
-     * Iteration number is used as a baseline for comparisons - each value is listed against # iteration -> value("throughput",
-     * 800.0, "iteration", "1")
+     * Values for numberguess testing are multi value based. Each line of the log file has to be parsed and inserted as one
+     * iteration. Following values are sought after: throughput, mean time, max time, samples, sessions and iteration number
+     * (derived). Iteration number is used as a baseline for comparisons - each value is listed against # iteration ->
+     * value("throughput", 800.0, "iteration", "1") and value("samples", 2600.0, "iteration", "1") will provide an
+     * understandable result.
      *
      */
     @Override
     protected void setValues(TestExecutionBuilder builder) throws IOException {
-        for (Map m : storedValues) {
-            builder.value(THROUGHPUT, (Double) m.get(THROUGHPUT), ITERATION, String.valueOf(storedValues.indexOf(m)));
-            builder.value(MEAN_TIME, (Double) m.get(MEAN_TIME), ITERATION, String.valueOf(storedValues.indexOf(m)));
-            builder.value(MAX_TIME, (Double) m.get(MAX_TIME), ITERATION, String.valueOf(storedValues.indexOf(m)));
-            builder.value(SAMPLES, (Double) m.get(SAMPLES), ITERATION, String.valueOf(storedValues.indexOf(m)));
-            builder.value(SESSIONS, (Double) m.get(SESSIONS), ITERATION, String.valueOf(storedValues.indexOf(m)));
+        for (Map<String, Double> m : storedValues) {
+            String iterationNumber = String.valueOf(storedValues.indexOf(m) + 1);
+            builder.value(THROUGHPUT, m.get(THROUGHPUT), ITERATION, iterationNumber);
+            builder.value(MEAN_TIME, m.get(MEAN_TIME), ITERATION, iterationNumber);
+            builder.value(MAX_TIME, m.get(MAX_TIME), ITERATION, iterationNumber);
+            builder.value(SAMPLES, m.get(SAMPLES), ITERATION, iterationNumber);
+            builder.value(SESSIONS, m.get(SESSIONS), ITERATION, iterationNumber);
         }
     }
 
     /**
-     * Each line must be verified not to contain sampling errors (last few can contain them) and unhealthy samples. Amount of
-     * such lines has to be satisfying. When parsing reaches first such error, we can already assume on the output.
+     * Each line must be verified not to contain sampling errors (last few can contain them, indicating server overload) and
+     * unhealthy samples. Amount of such lines has to be satisfying. When parsing reaches first such error, we can already
+     * assume on the output.
      *
      * Parsing stores the values for upload so that setvalues() method can only feed them to parser.
      */
@@ -97,6 +100,7 @@ public abstract class NumberguessPerfParser extends GeneralParser {
                 samplesMatcher.find();
                 sessionsMatcher.find();
 
+                // store desires data, these will be pushed in case the log is healthy
                 wantedData.put(THROUGHPUT, Double.valueOf(throughtputMatcher.group(0).substring(12).replace(",", "")));
                 wantedData.put(MEAN_TIME, Double.valueOf(meanTimeMatcher.group(0).substring(5)));
                 wantedData.put(MAX_TIME, Double.valueOf(maxTimeMatcher.group(0).substring(4)));
