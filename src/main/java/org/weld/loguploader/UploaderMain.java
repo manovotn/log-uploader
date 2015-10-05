@@ -20,9 +20,11 @@ import org.weld.loguploader.parser.BeanPerfParserInterceptors;
 import org.weld.loguploader.parser.BeanPerfParserProducers;
 import org.weld.loguploader.parser.BeanPerfParserSimpleInjection;
 import org.weld.loguploader.parser.GeneralParser;
+import org.weld.loguploader.parser.NumberguessPerfLoadHAParser;
 import org.weld.loguploader.parser.NumberguessPerfLoadNoHAParser;
 import org.weld.loguploader.parser.NumberguessPerfLoadParser;
 import org.weld.loguploader.parser.NumberguessPerfLoadSyncHAParser;
+import org.weld.loguploader.parser.NumberguessPerfStressHAParser;
 import org.weld.loguploader.parser.NumberguessPerfStressNoHAParser;
 import org.weld.loguploader.parser.NumberguessPerfStressParser;
 import org.weld.loguploader.parser.NumberguessPerfStressSyncHAParser;
@@ -111,6 +113,9 @@ public class UploaderMain {
             case "jenkins-eap-7x-Weld-perf-numberguess-load-cluster-sync-HA":
                 parser = new NumberguessPerfLoadSyncHAParser(pathToLogFile, tagList, params, comment);
                 break;
+            case "jenkins-eap-7x-Weld-perf-numberguess-load-cluster-HA":
+                parser = new NumberguessPerfLoadHAParser(pathToLogFile, tagList, params, comment);
+                break;
             case "jenkins-eap-7x-Weld-perf-numberguess-stress-cluster-noHA":
                 parser = new NumberguessPerfStressNoHAParser(pathToLogFile, tagList, params, comment);
                 break;
@@ -119,6 +124,9 @@ public class UploaderMain {
                 break;
             case "jenkins-eap-7x-Weld-perf-numberguess-stress-cluster-sync-HA":
                 parser = new NumberguessPerfStressSyncHAParser(pathToLogFile, tagList, params, comment);
+                break;
+            case "jenkins-eap-7x-Weld-perf-numberguess-stress-cluster-HA":
+                parser = new NumberguessPerfStressHAParser(pathToLogFile, tagList, params, comment);
                 break;
             default:
                 System.err.println("FAILURE: no suitable parser can be used.");
