@@ -31,7 +31,7 @@ public abstract class BeanPerfParser extends GeneralParser {
         String oneLine;
         while ((oneLine = reader.readLine()) != null) {
             if (oneLine.startsWith("Deployment time")) {
-                Pattern pattern = Pattern.compile("[1-9]+\\.[1-9]+");
+                Pattern pattern = Pattern.compile("[0-9]+\\.[0-9]+");
                 Matcher matcher = pattern.matcher(oneLine);
                 matcher.find();
                 // group 0 inside matcher now contains the proper part of the string
