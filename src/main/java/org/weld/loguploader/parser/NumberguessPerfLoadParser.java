@@ -19,6 +19,11 @@ public class NumberguessPerfLoadParser extends NumberguessPerfParser {
     }
 
     @Override
+    protected int getNumberOfValidLines() {
+        return 8;
+    }
+
+    @Override
     protected String getUid() {
         return "weld_numberguess_perf_load";
     }

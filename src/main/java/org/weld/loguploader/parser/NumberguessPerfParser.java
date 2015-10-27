@@ -124,8 +124,11 @@ public abstract class NumberguessPerfParser extends GeneralParser {
         closeResource();
 
         // decide whether the log had sufficient amount of lines
-        if (validLines < 10) {
+        if (validLines < getNumberOfValidLines()) {
             throw new IllegalArgumentException("The log only had " + validLines + " valid lines. That is not enough!");
         }
     }
+
+    protected abstract int getNumberOfValidLines();
+    
 }
