@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.weld.loguploader.parser;
+package org.weld.loguploader.parser.beans;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.perfrepo.model.builder.TestExecutionBuilder;
+import org.weld.loguploader.parser.GeneralParser;
 
 /**
  *

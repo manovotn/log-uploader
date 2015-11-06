@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.weld.loguploader.parser;
+package org.weld.loguploader.parser.beans;
 
 import java.util.List;
 import java.util.Map;
@@ -12,15 +12,15 @@ import java.util.Map;
  *
  * @author <a href="mailto:manovotn@redhat.com">Matej Novotny</a>
  */
-public class BeanPerfParserProducers extends BeanPerfParser {
+public class BeanPerfParserInterceptors extends BeanPerfParser {
 
-    public BeanPerfParserProducers(String pathToLog, List<String> tagList, Map<String, String> params, String comment) {
+    public BeanPerfParserInterceptors(String pathToLog, List<String> tagList, Map<String, String> params, String comment) {
         super(pathToLog, tagList, params, comment);
     }
 
     @Override
     protected String getUid() {
-        return "weld_bean_perf_producers";
+        return "weld_bean_perf_interceptors";
     }
 
 }

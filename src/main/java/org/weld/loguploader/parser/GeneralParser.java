@@ -7,9 +7,12 @@ package org.weld.loguploader.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +34,9 @@ public abstract class GeneralParser {
     protected String comment;
     protected Map<String, String> params;
 
+    // result set of test executions to be uploaded
+    protected Set<TestExecution> allTestExecutions = new HashSet<>();
+    
     public GeneralParser(String pathToLog, List<String> tagList, Map<String, String> params, String comment) {
         this.pathToLog = pathToLog;
         this.tagList = tagList;
@@ -42,11 +48,19 @@ public abstract class GeneralParser {
         manager.closeResource();
     }
 
-    public TestExecution createTestExecution() throws IOException {
-        return parseLogToTestExecution();
+    public Set<TestExecution> createTestExecutions() throws IOException {
+        parseLogToTestExecutions();
+        return Collections.unmodifiableSet(allTestExecutions);
     }
 
-    protected TestExecution parseLogToTestExecution() throws IOException {
+    /**
+     * Responsible for adding creating TestExecutions and adding 
+     * them to a local result-defining set (variable named allTestExecutions)
+     * 
+     * @return actual state of the set when this method ends
+     * @throws IOException should anything go wrong
+     */
+    protected void parseLogToTestExecutions() throws IOException {
         TestExecutionBuilder builder = TestExecution.builder();
 
         // match with Test by UID
@@ -82,8 +96,8 @@ public abstract class GeneralParser {
             builder.comment(comment);
         }
 
-        // finish by creating TestExecution
-        return builder.build();
+        // finish by creating TestExecution and adding it to set of executions to be uploaded
+        allTestExecutions.add(builder.build());
     }
 
     protected abstract String getUid();
@@ -103,7 +117,7 @@ public abstract class GeneralParser {
         try {
             verifyLogExists();
             verifyLogIsNotEmpty();
-            verifyLogMakesSense(); //test specific specific, must be done in separate classes
+            verifyLogMakesSense(); //test specific, has to be done in separate classes
         } catch (IOException e) {
             System.err.println("IO error occured, attempting to close resources and exiting. Original cause was: " + e.getMessage());
             manager.closeResource();

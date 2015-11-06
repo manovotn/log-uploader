@@ -9,25 +9,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.perfrepo.client.PerfRepoClient;
 import org.perfrepo.model.TestExecution;
-import org.weld.loguploader.parser.BeanPerfParserDecorators;
-import org.weld.loguploader.parser.BeanPerfParserEvents;
-import org.weld.loguploader.parser.BeanPerfParserInterceptors;
-import org.weld.loguploader.parser.BeanPerfParserProducers;
-import org.weld.loguploader.parser.BeanPerfParserSimpleInjection;
+import org.weld.loguploader.parser.beans.BeanPerfParserDecorators;
+import org.weld.loguploader.parser.beans.BeanPerfParserEvents;
+import org.weld.loguploader.parser.beans.BeanPerfParserInterceptors;
+import org.weld.loguploader.parser.beans.BeanPerfParserProducers;
+import org.weld.loguploader.parser.beans.BeanPerfParserSimpleInjection;
 import org.weld.loguploader.parser.GeneralParser;
-import org.weld.loguploader.parser.NumberguessPerfLoadHAParser;
-import org.weld.loguploader.parser.NumberguessPerfLoadNoHAParser;
-import org.weld.loguploader.parser.NumberguessPerfLoadParser;
-import org.weld.loguploader.parser.NumberguessPerfLoadSyncHAParser;
-import org.weld.loguploader.parser.NumberguessPerfStressHAParser;
-import org.weld.loguploader.parser.NumberguessPerfStressNoHAParser;
-import org.weld.loguploader.parser.NumberguessPerfStressParser;
-import org.weld.loguploader.parser.NumberguessPerfStressSyncHAParser;
+import org.weld.loguploader.parser.benchmark.BenchmarkPerfParser;
+import org.weld.loguploader.parser.numberguess.NumberguessPerfLoadHAParser;
+import org.weld.loguploader.parser.numberguess.NumberguessPerfLoadNoHAParser;
+import org.weld.loguploader.parser.numberguess.NumberguessPerfLoadParser;
+import org.weld.loguploader.parser.numberguess.NumberguessPerfLoadSyncHAParser;
+import org.weld.loguploader.parser.numberguess.NumberguessPerfStressHAParser;
+import org.weld.loguploader.parser.numberguess.NumberguessPerfStressNoHAParser;
+import org.weld.loguploader.parser.numberguess.NumberguessPerfStressParser;
+import org.weld.loguploader.parser.numberguess.NumberguessPerfStressSyncHAParser;
 
 /**
  *
@@ -85,8 +88,7 @@ public class UploaderMain {
 
         GeneralParser parser = null;
         String buildNameAndNumber = params.get("BUILD_TAG");
-        // detect what parser to use
-        //TODO add parsers for stress/load tests
+        // detect what parser to use, baed upon jenkins build name which is always passed to this execution as used for params
         String switchStatement = buildNameAndNumber.substring(0, buildNameAndNumber.lastIndexOf("-")).trim();
         switch (switchStatement) {
             case "jenkins-eap-7x-Weld-perf-bean-testing-decorators":
@@ -128,17 +130,20 @@ public class UploaderMain {
             case "jenkins-eap-7x-Weld-perf-numberguess-stress-cluster-HA":
                 parser = new NumberguessPerfStressHAParser(pathToLogFile, tagList, params, comment);
                 break;
+            case "jenkins-Weld-micro-benchmarks":
+                parser = new BenchmarkPerfParser(pathToLogFile, tagList, params, comment);
+                break;
             default:
                 System.err.println("FAILURE: no suitable parser can be used.");
                 System.exit(1);
         }
 
-        // verify of the log is correct
+        // verify the log is correct
         parser.verifyLog();
 
-        TestExecution testExecution = null;
+        Set<TestExecution> allTestExecutions = new HashSet<>();
         try {
-            testExecution = parser.createTestExecution();
+            allTestExecutions = parser.createTestExecutions();
         } catch (IOException e) {
             System.err.println("Caught IOException, closing resources and exiting...");
             parser.closeResource();
@@ -153,7 +158,9 @@ public class UploaderMain {
 
         try {
             //upload
-            client.createTestExecution(testExecution);
+            for (TestExecution exec : allTestExecutions) {
+                client.createTestExecution(exec);
+            }
         } catch (Exception ex) {
             // shouldnt happen
             System.out.println("Problem while uploading file, original message: " + ex.getMessage());

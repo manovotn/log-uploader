@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.weld.loguploader.parser;
+package org.weld.loguploader.parser.numberguess;
 
 import java.util.List;
 import java.util.Map;
@@ -12,20 +12,20 @@ import java.util.Map;
  *
  * @author <a href="mailto:manovotn@redhat.com">Matej Novotny</a>
  */
-public class NumberguessPerfLoadHAParser extends NumberguessPerfParser {
+public class NumberguessPerfStressNoHAParser extends NumberguessPerfParser {
 
-    public NumberguessPerfLoadHAParser(String pathToLog, List<String> tagList, Map<String, String> params, String comment) {
+    public NumberguessPerfStressNoHAParser(String pathToLog, List<String> tagList, Map<String, String> params, String comment) {
         super(pathToLog, tagList, params, comment);
     }
 
     @Override
     protected int getNumberOfValidLines() {
-        return 5;
+        return 20;
     }
 
     @Override
     protected String getUid() {
-        return "weld_numberguess_perf_load_cluster_HA";
+        return "weld_numberguess_perf_stress_cluster_noHA";
     }
 
 }
