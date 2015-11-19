@@ -54,7 +54,7 @@ public class BenchmarkPerfParser extends GeneralParser {
             } else {
                 String[] splitByComma = oneLine.split(",");
                 if (splitByComma.length != 7 || !(splitByComma[1].equals("\"thrpt\"")) || !(splitByComma[2].equals("4"))
-                    || Double.valueOf(splitByComma[3]).intValue() != 25) { //line validation
+                    || Double.valueOf(splitByComma[3]).intValue() != 100) { //line validation
                     closeResource();
                     throw new IllegalStateException("Log is not valid, one or more lines are corrupted!");
                 }
