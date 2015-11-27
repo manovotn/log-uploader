@@ -23,9 +23,4 @@ public class NumberguessPerfStressSyncHAParser extends NumberguessPerfParser {
         return 10;
     }
 
-    @Override
-    protected String getUid() {
-        return "weld_numberguess_perf_stress_cluster_sync_HA";
-    }
-
 }

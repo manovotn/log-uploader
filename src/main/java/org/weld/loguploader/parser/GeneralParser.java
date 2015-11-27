@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.weld.loguploader.parser;
 
 import java.io.BufferedReader;
@@ -49,18 +44,17 @@ public abstract class GeneralParser {
     }
 
     public Set<TestExecution> createTestExecutions() throws IOException {
-        parseLogToTestExecutions();
+        allTestExecutions.addAll(parseLogToTestExecutions());
         return Collections.unmodifiableSet(allTestExecutions);
     }
 
     /**
-     * Responsible for adding creating TestExecutions and adding 
-     * them to a local result-defining set (variable named allTestExecutions)
+     * Responsible for creating TestExecutions and returning them as a set.
      * 
      * @return actual state of the set when this method ends
      * @throws IOException should anything go wrong
      */
-    protected void parseLogToTestExecutions() throws IOException {
+    protected Set<TestExecution> parseLogToTestExecutions() throws IOException {
         TestExecutionBuilder builder = TestExecution.builder();
 
         // match with Test by UID
@@ -97,7 +91,9 @@ public abstract class GeneralParser {
         }
 
         // finish by creating TestExecution and adding it to set of executions to be uploaded
-        allTestExecutions.add(builder.build());
+        Set<TestExecution> result = new HashSet<>();
+        result.add(builder.build());
+        return result;
     }
 
     protected abstract String getUid();
@@ -121,6 +117,7 @@ public abstract class GeneralParser {
         } catch (IOException e) {
             System.err.println("IO error occured, attempting to close resources and exiting. Original cause was: " + e.getMessage());
             manager.closeResource();
+            System.exit(0);
         }
     }
 
@@ -129,7 +126,9 @@ public abstract class GeneralParser {
         reader = manager.getReader();
     }
 
-    protected abstract void setValues(TestExecutionBuilder builder) throws IOException;
+    protected void setValues(TestExecutionBuilder builder) throws IOException {
+        throw new UnsupportedOperationException("This operation needs to be implemented in extending classes!");
+    }
 
     protected void verifyLogIsNotEmpty() throws IOException {
         reader.mark(500);
@@ -146,5 +145,10 @@ public abstract class GeneralParser {
 
     }
 
+    /**
+     * Parser-specific method. Based on parsed data, decide whether it is valid.
+     * 
+     * @throws IOException 
+     */
     protected abstract void verifyLogMakesSense() throws IOException;
 }

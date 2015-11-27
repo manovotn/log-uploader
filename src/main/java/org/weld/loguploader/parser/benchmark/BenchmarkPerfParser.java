@@ -3,8 +3,10 @@ package org.weld.loguploader.parser.benchmark;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.perfrepo.model.TestExecution;
 import org.perfrepo.model.builder.TestExecutionBuilder;
@@ -25,14 +27,8 @@ public class BenchmarkPerfParser extends GeneralParser {
     private Map<String, Double> storedScoreError; //stored as testName:scoreError
 
     @Override
-    protected String getUid() {
+    protected final String getUid() {
         return "weld_micro_benchmarks";
-    }
-
-    @Override
-    protected void setValues(TestExecutionBuilder builder) throws IOException {
-        // no-op, not used in this scenario
-        // TODO this needs to be refactor to avoid such hallow methods
     }
 
     @Override
@@ -81,7 +77,9 @@ public class BenchmarkPerfParser extends GeneralParser {
      * @throws IOException
      */
     @Override
-    protected void parseLogToTestExecutions() throws IOException {
+    protected Set<TestExecution> parseLogToTestExecutions() throws IOException {
+        Set<TestExecution> result = new HashSet<>();
+        
         for (String benchmark : storedScore.keySet()) {
             TestExecutionBuilder builder = TestExecution.builder();
 
@@ -122,8 +120,9 @@ public class BenchmarkPerfParser extends GeneralParser {
             }
 
             // finish by creating TestExecution and adding it to set of executions to be uploaded
-            allTestExecutions.add(builder.build());
+            result.add(builder.build());
         }
+        return result;
     }
 
 }

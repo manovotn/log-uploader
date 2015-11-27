@@ -88,7 +88,7 @@ public class UploaderMain {
 
         GeneralParser parser = null;
         String buildNameAndNumber = params.get("BUILD_TAG");
-        // detect what parser to use, baed upon jenkins build name which is always passed to this execution as used for params
+        // detect what parser to use, based on jenkins build name which is always passed to this execution as it is later used for params
         String switchStatement = buildNameAndNumber.substring(0, buildNameAndNumber.lastIndexOf("-")).trim();
         switch (switchStatement) {
             case "jenkins-eap-7x-Weld-perf-bean-testing-decorators":
@@ -162,7 +162,7 @@ public class UploaderMain {
                 client.createTestExecution(exec);
             }
         } catch (Exception ex) {
-            // shouldnt happen
+            // shouldn't happen
             System.out.println("Problem while uploading file, original message: " + ex.getMessage());
         }
     }

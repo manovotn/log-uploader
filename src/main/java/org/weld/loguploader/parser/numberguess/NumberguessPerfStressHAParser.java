@@ -22,10 +22,4 @@ public class NumberguessPerfStressHAParser extends NumberguessPerfParser {
     protected int getNumberOfValidLines() {
         return 6;
     }
-
-    @Override
-    protected String getUid() {
-        return "weld_numberguess_perf_stress_cluster_HA";
-    }
-
 }

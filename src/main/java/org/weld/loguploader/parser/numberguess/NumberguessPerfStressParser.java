@@ -23,9 +23,4 @@ public class NumberguessPerfStressParser extends NumberguessPerfParser {
         return 20;
     }
 
-    @Override
-    protected String getUid() {
-        return "weld_numberguess_perf_stress";
-    }
-
 }

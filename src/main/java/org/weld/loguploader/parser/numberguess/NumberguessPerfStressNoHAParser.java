@@ -19,13 +19,8 @@ public class NumberguessPerfStressNoHAParser extends NumberguessPerfParser {
     }
 
     @Override
-    protected int getNumberOfValidLines() {
+    protected int getNumberOfValidLines() {getUid();
         return 20;
-    }
-
-    @Override
-    protected String getUid() {
-        return "weld_numberguess_perf_stress_cluster_noHA";
     }
 
 }

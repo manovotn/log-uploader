@@ -127,4 +127,14 @@ public abstract class NumberguessPerfParser extends GeneralParser {
 
     protected abstract int getNumberOfValidLines();
     
+    /**
+     * All numberguess tests were merged under one test UID.
+     * This allows to compare the performance of single node run to
+     * that of four nodes. 
+     */
+    @Override
+    protected final String getUid() {
+        return "weld_numberguess_perf";
+    }
+    
 }
