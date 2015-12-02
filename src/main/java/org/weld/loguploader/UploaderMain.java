@@ -23,14 +23,15 @@ import org.weld.loguploader.parser.beans.BeanPerfParserProducers;
 import org.weld.loguploader.parser.beans.BeanPerfParserSimpleInjection;
 import org.weld.loguploader.parser.GeneralParser;
 import org.weld.loguploader.parser.benchmark.BenchmarkPerfParser;
-import org.weld.loguploader.parser.numberguess.NumberguessPerfLoadHAParser;
-import org.weld.loguploader.parser.numberguess.NumberguessPerfLoadNoHAParser;
-import org.weld.loguploader.parser.numberguess.NumberguessPerfLoadParser;
-import org.weld.loguploader.parser.numberguess.NumberguessPerfLoadSyncHAParser;
-import org.weld.loguploader.parser.numberguess.NumberguessPerfStressHAParser;
-import org.weld.loguploader.parser.numberguess.NumberguessPerfStressNoHAParser;
-import org.weld.loguploader.parser.numberguess.NumberguessPerfStressParser;
-import org.weld.loguploader.parser.numberguess.NumberguessPerfStressSyncHAParser;
+import org.weld.loguploader.parser.numberguess.conversation.NumberguessPerfConversationParser;
+import org.weld.loguploader.parser.numberguess.load.NumberguessPerfLoadHAParser;
+import org.weld.loguploader.parser.numberguess.load.NumberguessPerfLoadNoHAParser;
+import org.weld.loguploader.parser.numberguess.load.NumberguessPerfLoadParser;
+import org.weld.loguploader.parser.numberguess.load.NumberguessPerfLoadSyncHAParser;
+import org.weld.loguploader.parser.numberguess.stress.NumberguessPerfStressHAParser;
+import org.weld.loguploader.parser.numberguess.stress.NumberguessPerfStressNoHAParser;
+import org.weld.loguploader.parser.numberguess.stress.NumberguessPerfStressParser;
+import org.weld.loguploader.parser.numberguess.stress.NumberguessPerfStressSyncHAParser;
 
 /**
  *
@@ -129,6 +130,12 @@ public class UploaderMain {
                 break;
             case "jenkins-eap-7x-Weld-perf-numberguess-stress-cluster-HA":
                 parser = new NumberguessPerfStressHAParser(pathToLogFile, tagList, params, comment);
+                break;
+            case "jenkins-eap-7x-Weld-perf-numberguess-conversation-stress":
+                parser = new NumberguessPerfConversationParser(pathToLogFile, tagList, params, comment);
+                break;
+            case "jenkins-eap-7x-Weld-perf-numberguess-conversation-load":
+                parser = new NumberguessPerfConversationParser(pathToLogFile, tagList, params, comment);
                 break;
             case "jenkins-Weld-micro-benchmarks":
                 parser = new BenchmarkPerfParser(pathToLogFile, tagList, params, comment);
