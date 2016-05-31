@@ -24,6 +24,7 @@ public abstract class NumberguessPerfParser extends GeneralParser {
     private static final String SAMPLES = "samples";
     private static final String SESSIONS = "sessions";
     private static final String THROUGHPUT = "throughput";
+    private static final String THROUGHPUT_PEAK = "throughput peak";
     private static final String NODES = "nodes";
 
     private List<Map<String, Double>> storedValues;
@@ -43,6 +44,9 @@ public abstract class NumberguessPerfParser extends GeneralParser {
      */
     @Override
     protected void setValues(TestExecutionBuilder builder) throws IOException {
+        Double throughtputPeak = 0d;
+        boolean peakReached = false;
+
         for (Map<String, Double> m : storedValues) {
             String iterationNumber = String.valueOf(storedValues.indexOf(m) + 1);
             builder.value(THROUGHPUT, m.get(THROUGHPUT), ITERATION, iterationNumber);
@@ -51,7 +55,18 @@ public abstract class NumberguessPerfParser extends GeneralParser {
             builder.value(SAMPLES, m.get(SAMPLES), ITERATION, iterationNumber);
             builder.value(SESSIONS, m.get(SESSIONS), ITERATION, iterationNumber);
             builder.value(NODES, m.get(NODES), ITERATION, iterationNumber);
+
+            // ordering should be correct as the list is built up line by line from file
+            Double currentThroughput = m.get(THROUGHPUT);
+            if (!peakReached && currentThroughput > throughtputPeak) {
+                throughtputPeak = currentThroughput;
+            } else {
+                peakReached = true;
+            }
         }
+
+        // add a thoughput peak - single value metric
+        builder.value(THROUGHPUT_PEAK, throughtputPeak);
     }
 
     /**
@@ -126,15 +141,14 @@ public abstract class NumberguessPerfParser extends GeneralParser {
     }
 
     protected abstract int getNumberOfValidLines();
-    
+
     /**
-     * All numberguess tests were merged under one test UID.
-     * This allows to compare the performance of single node run to
-     * that of four nodes. 
+     * All numberguess tests were merged under one test UID. This allows to compare the performance of single node run to that
+     * of four nodes.
      */
     @Override
     protected final String getUid() {
         return "weld_numberguess_perf";
     }
-    
+
 }
