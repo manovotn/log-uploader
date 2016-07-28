@@ -57,7 +57,7 @@ public abstract class BeanPerfParser extends GeneralParser {
 
         // verify
         if ((!matcherForErrors.group(0).substring(8).equals("0")) || (!matcherForSamples.group(0).equals("100%"))) {
-            throw new IOException("Log file is corrupted, it contains errors an/or invalid samples, please check!");
+            throw new IllegalArgumentException("Log file is corrupted, it contains errors an/or invalid samples, please check!");
         } else {
             // return reader to the beginning of the file
             manager.closeResource();
