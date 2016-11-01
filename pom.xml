@@ -11,7 +11,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         
         <!--PerfRepo version-->
-        <version.perfrepo.client>1.3</version.perfrepo.client>
+        <version.perfrepo.client>1.6</version.perfrepo.client>
         
         <!--input args, serve as an example-->
         <pathToLog>/home/here</pathToLog>

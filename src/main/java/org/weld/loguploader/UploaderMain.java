@@ -162,11 +162,16 @@ public class UploaderMain {
 
         // create client
         PerfRepoClient client = new PerfRepoClient(urlAndPort, "", username, password);
-
+        
         try {
             //upload
             for (TestExecution exec : allTestExecutions) {
-                client.createTestExecution(exec);
+                // check return value, should be Long (giving us ID), if null shows up, that means something went awry
+                // upload and fail eagerly on null return value
+                if (client.createTestExecution(exec) == null) {
+                    System.err.println("Error uploading test execution, see console for error code!");
+                    System.exit(1);
+                }
             }
         } catch (Exception ex) {
             // shouldn't happen
